@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .order-details {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .order-details p {
+            margin: 5px 0;
+        }
+
+        .order-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .total {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        input {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #448AFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Order Details</h1>
+    <input type="text" id="orderID" placeholder="Enter Order ID">
+    <button onclick="getOrderDetails()">Get Order Details</button>
+    <div id="orderDetails"></div>
+</div>
+
+<script>
+    async function getOrderDetails() {
+        let orderNumber = document.getElementById("orderID").value;
+        const response = await fetch(`http://localhost:3000/orderID/?id=${orderNumber}`)
+        if (response.ok) {
+            const data = await response.json();
+            // Формирование строки с данными заказа
+            let orderDetailsHtml = `<h2>Order ${orderNumber} Details</h2>`;
+            orderDetailsHtml += "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+
+            // Вывод данных на страницу
+            document.getElementById('orderDetails').innerHTML = orderDetailsHtml;
+        } else if (response.status === 404) {
+            // Обработка случая, когда заказ не найден
+            document.getElementById('orderDetails').innerHTML = "<p>Order not found</p>";
+        } else {
+            // Обработка других возможных ошибок
+            document.getElementById('orderDetails').innerHTML = "<p>Something went wrong</p>";
+        }
+    }
+</script>
+</body>
+</html>
