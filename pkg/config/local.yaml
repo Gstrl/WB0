@@ -1,0 +1,8 @@
+http_server:
+  address: "8082"
+db_connection:
+  host: "localhost"
+  port: 5433
+  user: "postgres"
+  password: "postgres"
+  dbname: "postgres"

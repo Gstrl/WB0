@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -40,12 +39,7 @@ func showOrder(w http.ResponseWriter, r *http.Request, c *memcache.Cache) {
 
 }
 
-func RunServer(c *memcache.Cache) error {
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
-	}
+func RunServer(c *memcache.Cache, address string) error {
 
 	mux := http.NewServeMux()
 
@@ -53,7 +47,7 @@ func RunServer(c *memcache.Cache) error {
 	mux.HandleFunc("/orderID/", func(w http.ResponseWriter, r *http.Request) {
 		showOrder(w, r, c)
 	}) // GET
-	err := http.ListenAndServe(":"+port, mux)
+	err := http.ListenAndServe(":"+address, mux)
 	if err != nil {
 		return err
 	}

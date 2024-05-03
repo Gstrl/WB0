@@ -76,9 +76,6 @@ func main() {
 	}
 
 	js, err := jetstream.New(nc)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	if err != nil {
 		log.Fatal(err)

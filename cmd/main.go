@@ -1,6 +1,7 @@
 package main
 
 import (
+	"WB0/pkg/config"
 	"WB0/pkg/consumerNats"
 	"WB0/pkg/memcache"
 	"WB0/pkg/server"
@@ -11,6 +12,8 @@ import (
 )
 
 func main() {
+	//Инициализация конфига
+	cfg := config.MustLoad()
 	//Инициализация cache
 	cache := memcache.New(0, 0)
 	//Подключение к NATS  серверу
@@ -22,7 +25,7 @@ func main() {
 	}()
 	//Запуск сервера
 	go func() {
-		err := server.RunServer(cache)
+		err := server.RunServer(cache, cfg.Address)
 		if err != nil {
 			log.Fatal(err)
 		}
