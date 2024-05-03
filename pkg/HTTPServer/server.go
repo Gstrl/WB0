@@ -1,4 +1,4 @@
-package server
+package HTTPServer
 
 import (
 	"WB0/pkg/memcache"

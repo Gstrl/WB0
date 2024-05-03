@@ -1,10 +1,12 @@
 package main
 
 import (
+	"WB0/pkg/HTTPServer"
 	"WB0/pkg/config"
 	"WB0/pkg/consumerNats"
+	"WB0/pkg/db_connection"
 	"WB0/pkg/memcache"
-	"WB0/pkg/server"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -12,8 +14,15 @@ import (
 )
 
 func main() {
-	//Инициализация конфига
+	//1) Чтение конфига
 	cfg := config.MustLoad()
+	// 1) Подключение к Postgresql
+	db, err := db_connection.DBConnect(cfg.DBConnection)
+	if err != nil {
+		log.Fatalf("Ошибка соединения с базой данных: %v", err)
+	}
+	fmt.Println(db)
+
 	//Инициализация cache
 	cache := memcache.New(0, 0)
 	//Подключение к NATS  серверу
@@ -25,7 +34,7 @@ func main() {
 	}()
 	//Запуск сервера
 	go func() {
-		err := server.RunServer(cache, cfg.Address)
+		err := HTTPServer.RunServer(cache, cfg.Address)
 		if err != nil {
 			log.Fatal(err)
 		}

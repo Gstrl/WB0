@@ -2,7 +2,7 @@ http_server:
   address: "8082"
 db_connection:
   host: "localhost"
-  port: 5433
+  port: 5432
   user: "postgres"
-  password: "postgres"
+  password: "ggwp0404"
   dbname: "postgres"
