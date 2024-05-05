@@ -6,7 +6,6 @@ import (
 	"WB0/pkg/consumerNats"
 	"WB0/pkg/db_connection"
 	"WB0/pkg/memcache"
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -16,30 +15,34 @@ import (
 func main() {
 	//1) Чтение конфига
 	cfg := config.MustLoad()
-	// 1) Подключение к Postgresql
+	// 2) Подключение к Postgresql
 	db, err := db_connection.DBConnect(cfg.DBConnection)
 	if err != nil {
 		log.Fatalf("Ошибка соединения с базой данных: %v", err)
 	}
-	fmt.Println(db)
 
-	//Инициализация cache
+	//3)Инициализация cache
 	cache := memcache.New(0, 0)
-	//Подключение к NATS  серверу
+	//4)Записывем в кэш значения из базы данных
+	err = cache.InsertingDB(db)
+	if err != nil {
+		log.Fatalf("Ошибка записи в кэш: %v", err)
+	}
+	//5)Подключение к NATS  серверу
 	go func() {
-		err := consumerNats.RunConsumer(cache)
+		err := consumerNats.RunConsumer(db, cache)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
-	//Запуск сервера
+	//6)Запуск сервера
 	go func() {
 		err := HTTPServer.RunServer(cache, cfg.Address)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
-	// Ожидание сигнала для завершения работы приложения
+	//7) Ожидание сигнала для завершения работы приложения
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
 	<-signalCh

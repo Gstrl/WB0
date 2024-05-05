@@ -76,7 +76,7 @@
 <script>
     async function getOrderDetails() {
         let orderNumber = document.getElementById("orderID").value;
-        const response = await fetch(`http://localhost:3000/orderID/?id=${orderNumber}`)
+        const response = await fetch(`http://localhost:8082/orderID/?id=${orderNumber}`)
         if (response.ok) {
             const data = await response.json();
             // Формирование строки с данными заказа
