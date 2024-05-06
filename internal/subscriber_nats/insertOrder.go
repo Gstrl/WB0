@@ -1,54 +1,11 @@
-package consumerNats
+package subscriber_nats
 
 import (
-	"WB0/pkg/memcache"
-	. "WB0/pkg/order_struct"
+	. "WB0/internal/order_struct"
 	"database/sql"
-	"encoding/json"
-	"fmt"
-	"github.com/nats-io/nats.go"
-	"log"
 )
 
-func RunConsumer(db *sql.DB, c *memcache.Cache) error {
-
-	nc, err := nats.Connect("nats://127.0.0.1:4222")
-	if err != nil {
-		return err
-	}
-	fmt.Println("Установка соединения с сервером NATS Streaming - успешно")
-	defer nc.Close()
-
-	var order Order
-	subscription, err := nc.Subscribe("test.subject", func(msg *nats.Msg) {
-		log.Printf("Получено сообщение: %s", string(msg.Data))
-
-		err = json.Unmarshal(msg.Data, &order)
-		if err != nil {
-			log.Fatalf("Ошибка парсинга JSON: %v", err)
-		}
-
-		//Добавление заказа в кэш
-		c.Set(c.AutoIncrement(), order, 0)
-		//Добавление заказа в базу данных
-		err := InsertOrder(db, order)
-		if err != nil {
-			log.Fatalf("Ошибка записи заказа в базу данных: %v", err)
-			return
-		}
-
-	})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer subscription.Unsubscribe()
-	select {}
-}
-
 func InsertOrder(db *sql.DB, order Order) error {
-
-	fmt.Println("вставляет данные о заказе в базу данных")
 
 	tx, err := db.Begin()
 	if err != nil {
@@ -95,7 +52,6 @@ func InsertOrder(db *sql.DB, order Order) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(orderID)
 	// Вставка данных в таблицу items
 	for _, item := range order.Items {
 		_, err = tx.Exec(`

@@ -1,7 +1,8 @@
-package HTTPServer
+package HTTP_server
 
 import (
-	"WB0/pkg/memcache"
+	"WB0/internal/config"
+	"WB0/internal/memcache"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -39,17 +40,24 @@ func showOrder(w http.ResponseWriter, r *http.Request, c *memcache.Cache) {
 
 }
 
-func RunServer(c *memcache.Cache, address string) error {
-
+func RunServer(c *memcache.Cache, cfg *config.Config) error {
 	mux := http.NewServeMux()
+	server := &http.Server{
+		Addr:         cfg.Address,
+		Handler:      mux,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.IdleTimeout,
+	}
 
 	mux.HandleFunc("/", indexHandler)
 	mux.HandleFunc("/orderID/", func(w http.ResponseWriter, r *http.Request) {
 		showOrder(w, r, c)
 	}) // GET
-	err := http.ListenAndServe(":"+address, mux)
+	err := server.ListenAndServe()
 	if err != nil {
 		return err
 	}
+
 	select {}
 }

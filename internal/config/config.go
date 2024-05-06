@@ -13,12 +13,13 @@ import (
 type Config struct {
 	HTTPServer   `yaml:"http_server"`
 	DBConnection `yaml:"db_connection"`
+	NatsServer   `yaml:"nats_server"`
 }
 
 type HTTPServer struct {
-	Address     string        `yaml:"address" env-default:"localhost:8080"`
-	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
-	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+	Address     string        `yaml:"address"`
+	Timeout     time.Duration `yaml:"timeout"`
+	IdleTimeout time.Duration `yaml:"idle_timeout"`
 }
 
 type DBConnection struct {
@@ -29,17 +30,22 @@ type DBConnection struct {
 	Dbname   string `yaml:"dbname"`
 }
 
+type NatsServer struct {
+	Url string `yaml:"url"`
+}
+
+// MustLoad В реальном проекте лучше читать из переменных окружения
 func MustLoad() *Config {
 	var cfg Config
 	// Получаем текущую директорию
 	dir, err := os.Getwd()
 	fmt.Println(dir)
 	if err != nil {
-		fmt.Println("Error getting current directory:", err)
+		fmt.Println("Ошибка получения текущего каталога:", err)
 
 	}
 
-	file, err := os.Open(filepath.Join(dir, "pkg/config/local.yaml"))
+	file, err := os.Open(filepath.Join(dir, "internal/config/local.yaml"))
 	if err != nil {
 		log.Fatal(err)
 	}

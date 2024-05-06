@@ -1,0 +1,12 @@
+http_server:
+  address: "0.0.0.0:8082"
+  timeout: 4s
+  idle_timeout: 30s
+db_connection:
+  host: "localhost"
+  port: 5432
+  user: "postgres"
+  password: "ggwp0404"
+  dbname: "postgres"
+nats_server:
+  url: "nats://127.0.0.1:4222"

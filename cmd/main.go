@@ -1,11 +1,11 @@
 package main
 
 import (
-	"WB0/pkg/HTTPServer"
-	"WB0/pkg/config"
-	"WB0/pkg/consumerNats"
-	"WB0/pkg/db_connection"
-	"WB0/pkg/memcache"
+	"WB0/internal/HTTP_server"
+	"WB0/internal/config"
+	"WB0/internal/db_connection"
+	"WB0/internal/memcache"
+	"WB0/internal/subscriber_nats"
 	"log"
 	"os"
 	"os/signal"
@@ -20,7 +20,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Ошибка соединения с базой данных: %v", err)
 	}
-
 	//3)Инициализация cache
 	cache := memcache.New(0, 0)
 	//4)Записывем в кэш значения из базы данных
@@ -28,20 +27,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("Ошибка записи в кэш: %v", err)
 	}
-	//5)Подключение к NATS  серверу
+	//5)Подключение к NATS серверу
 	go func() {
-		err := consumerNats.RunConsumer(db, cache)
+		err := subscriber_nats.RunSubscriber(db, cache, cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
-	//6)Запуск сервера
+	//6)Запуск веб-сервера
 	go func() {
-		err := HTTPServer.RunServer(cache, cfg.Address)
+		err := HTTP_server.RunServer(cache, cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
+	log.Println("Веб-сервер успешно запущен")
 	//7) Ожидание сигнала для завершения работы приложения
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)

@@ -1,7 +1,7 @@
 package db_connection
 
 import (
-	"WB0/pkg/config"
+	"WB0/internal/config"
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -21,7 +21,7 @@ func DBConnect(cfg config.DBConnection) (*sql.DB, error) {
 		return nil, err
 	}
 
-	log.Println("Успешное подключение к базе данных PostgreSQL!")
+	log.Println("Успешное подключение к базе данных PostgreSQL")
 
 	err = CreateTable(db)
 	if err != nil {
