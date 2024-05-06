@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-var tpl = template.Must(template.ParseFiles("page/index.html"))
+var tpl = template.Must(template.ParseFiles("template/index.html"))
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tpl.Execute(w, nil)
