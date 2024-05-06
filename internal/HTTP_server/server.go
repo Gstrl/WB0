@@ -4,7 +4,6 @@ import (
 	"WB0/internal/config"
 	"WB0/internal/memcache"
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -25,7 +24,6 @@ func showOrder(w http.ResponseWriter, r *http.Request, c *memcache.Cache) {
 		return
 	}
 	order, found := c.Get(id)
-	fmt.Println(order)
 	if !found {
 		http.Error(w, "Order not found in cache", http.StatusNotFound)
 		return

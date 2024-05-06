@@ -38,7 +38,7 @@ func main() {
 	go func() {
 		err := HTTP_server.RunServer(cache, cfg)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("Ошибка запуска веб-сервера: %v", err)
 		}
 	}()
 	log.Println("Веб-сервер успешно запущен")
