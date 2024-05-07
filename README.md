@@ -21,4 +21,4 @@
 
 ## Демонстрационное видео
 
-Короткое видео, демонстрирующее функционал , доступно [здесь](https://youtu.be/gYo1X49u1R0).
+Короткое видео, демонстрирующее функционал , доступно [здесь](https://drive.google.com/file/d/1PsMBTYze5JbjhmjGkcwotkqBg4IdQLA6/view?usp=sharing).
