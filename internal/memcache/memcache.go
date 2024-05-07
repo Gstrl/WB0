@@ -144,6 +144,6 @@ func (c *Cache) clearItems(keys []int) {
 func (c *Cache) AutoIncrement() int {
 	c.RLock()
 	defer c.RUnlock()
-	id := len(c.items)++
+	id := len(c.items) + 1
 	return id
 }
